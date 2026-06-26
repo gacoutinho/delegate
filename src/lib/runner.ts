@@ -8,6 +8,7 @@
  */
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import type { AgentDef } from "./agents";
+import { enabledMcpServers, connectorContextNote } from "./connectors";
 
 /** Agents' working directory: the project root.
  *  User inputs live in `data/`; outputs usually go to `data/` too. */
@@ -43,14 +44,22 @@ export async function* runAgent(
 ): AsyncGenerator<AgentEvent> {
   yield { kind: "start", agent: agent.id, agentName: agent.name };
 
+  // Connected apps (Slack, Notion, GitHub…) become MCP tools available to the
+  // agent. A failing/auth-pending server doesn't break the run (MCP startup is
+  // non-blocking) — its tools simply won't be available.
+  const mcpServers = enabledMcpServers();
+  const note = connectorContextNote();
+  const systemPrompt = note ? `${agent.systemPrompt}\n\n${note}` : agent.systemPrompt;
+
   const response = query({
     prompt: task,
     options: {
       model: agent.model || DEFAULT_MODEL,
       // Keep the full Claude Code agent behavior (reliable tool use) and append
-      // this agent's specific instructions.
-      systemPrompt: { type: "preset", preset: "claude_code", append: agent.systemPrompt },
+      // this agent's specific instructions (+ connected integrations note).
+      systemPrompt: { type: "preset", preset: "claude_code", append: systemPrompt },
       allowedTools: agent.tools,
+      mcpServers: Object.keys(mcpServers).length ? mcpServers : undefined,
       cwd: CWD,
       // Don't load local settings.json/CLAUDE.md — behavior comes from the
       // agent file, reproducibly.

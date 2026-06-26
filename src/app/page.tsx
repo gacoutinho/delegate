@@ -1,5 +1,6 @@
 import { loadAreas, loadAgents, toSummary } from "@/lib/agents";
 import Dashboard from "@/components/Dashboard";
+import Connectors from "@/components/Connectors";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,8 @@ export default function Home() {
         the task, and they <strong>actually execute</strong> — read your data, run
         commands, write files. Pick several to make them work as a team.
       </p>
+
+      <Connectors />
 
       <Dashboard areas={areas} agents={agents} />
     </div>

@@ -54,6 +54,17 @@ These are just the starting point. **The fun part is making your own** — see [
 
 ---
 
+## 🔌 Connectors
+
+At the top of the dashboard there's a **Connectors** strip — one click per app to plug in your tools (GitHub, Slack, Notion, Linear, Gmail, Google Drive, Google Calendar, ClickUp, Figma, Asana). Each connector is an **MCP server**: click a logo, paste its endpoint URL + access token, and Connect. From then on every agent gets those apps as tools (`mcp__<service>__<action>`) and can act in them — read a Notion page, open a GitHub PR, post to Slack.
+
+- Catalog lives in `connectors.config.json` (add your own there).
+- Credentials are saved **only** in `connectors.local.json` (git-ignored) and are **never sent to the browser** — the UI just shows connected / not.
+- A connector that fails auth won't break a run; its tools simply won't be available.
+- OAuth-based apps (Slack, Notion, Google…) need an access token from their own flow; token-based ones (GitHub PAT, ClickUp) just take the token directly.
+
+---
+
 ## 🏗️ How it works (architecture)
 
 ```

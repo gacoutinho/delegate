@@ -143,3 +143,67 @@ button {
 
 .cost { color: var(--text-faint); font-size: 12px; font-family: var(--mono); }
 .empty-hint { color: var(--text-faint); font-size: 13px; text-align: center; margin-top: 40px; line-height: 1.6; }
+
+/* ---- Connectors ---- */
+.connectors {
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--panel), var(--bg-soft));
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 32px;
+}
+.conn-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 13px; flex-wrap: wrap; }
+.conn-title { font-size: 15px; font-weight: 650; }
+.conn-sub { color: var(--text-faint); font-size: 12.5px; }
+.conn-strip { display: flex; gap: 9px; flex-wrap: wrap; }
+
+.conn-chip {
+  display: flex; align-items: center; gap: 9px;
+  background: var(--bg-soft); border: 1px solid var(--border);
+  border-radius: 11px; padding: 8px 12px 8px 9px;
+  transition: border-color .15s, background .15s, transform .15s;
+}
+.conn-chip:hover { border-color: var(--accent); transform: translateY(-1px); background: var(--panel-2); }
+.conn-chip.on { border-color: var(--green); background: rgba(65,209,139,.07); }
+.conn-name { font-size: 13px; font-weight: 550; }
+.logo { width: 22px; height: 22px; display: grid; place-items: center; background: #fff; border-radius: 6px; padding: 2px; flex: none; }
+.logo svg { display: block; }
+.conn-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-faint); flex: none; }
+.conn-dot.on { background: var(--green); box-shadow: 0 0 7px var(--green); }
+
+.conn-overlay {
+  position: fixed; inset: 0; z-index: 60;
+  background: rgba(5,7,11,.7); backdrop-filter: blur(4px);
+  display: grid; place-items: center; padding: 20px;
+}
+.conn-modal {
+  width: min(440px, 100%); background: var(--panel);
+  border: 1px solid var(--border); border-radius: 16px; padding: 20px;
+}
+.conn-modal-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.conn-modal-head .logo { width: 34px; height: 34px; border-radius: 9px; }
+.conn-modal-title { font-weight: 650; font-size: 16px; }
+.conn-modal-cat { color: var(--text-faint); font-size: 11.5px; font-family: var(--mono); margin-top: 1px; }
+.conn-modal-head .x { margin-left: auto; }
+
+.conn-label { display: block; font-size: 12px; color: var(--text-dim); margin: 12px 0 5px; font-weight: 550; }
+.conn-saved { color: var(--green); font-family: var(--mono); font-size: 11px; }
+.conn-input {
+  width: 100%; background: var(--bg-soft); border: 1px solid var(--border);
+  border-radius: 9px; color: var(--text); padding: 9px 11px; font-size: 13.5px; font-family: var(--mono);
+}
+.conn-input:focus { outline: none; border-color: var(--accent); }
+.conn-hint { color: var(--text-faint); font-size: 12px; line-height: 1.45; margin: 8px 0 0; }
+.conn-actions { display: flex; align-items: center; gap: 9px; margin-top: 18px; }
+
+.ghost {
+  font: inherit; cursor: pointer; background: var(--panel); color: var(--text);
+  border: 1px solid var(--border); border-radius: 9px; padding: 8px 14px; font-size: 13px;
+}
+.ghost:hover { border-color: var(--accent); }
+.ghost:disabled { opacity: .5; cursor: not-allowed; }
+.x {
+  font: inherit; cursor: pointer; background: transparent; border: none; color: var(--text-dim);
+  font-size: 22px; line-height: 1; width: 30px; height: 30px; border-radius: 7px;
+}
+.x:hover { background: var(--panel-2); color: var(--text); }

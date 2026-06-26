@@ -1,0 +1,94 @@
+{
+  "connectors": [
+    {
+      "id": "github",
+      "name": "GitHub",
+      "category": "Dev",
+      "transport": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "auth": "token",
+      "authHint": "Paste a GitHub Personal Access Token (repo scope)."
+    },
+    {
+      "id": "slack",
+      "name": "Slack",
+      "category": "Productivity",
+      "transport": "http",
+      "url": "https://mcp.slack.com/mcp",
+      "auth": "oauth",
+      "authHint": "Paste a Slack access token (xoxp-...) from your app's OAuth."
+    },
+    {
+      "id": "notion",
+      "name": "Notion",
+      "category": "Productivity",
+      "transport": "http",
+      "url": "https://mcp.notion.com/mcp",
+      "auth": "oauth",
+      "authHint": "Paste a Notion access token from the Notion MCP OAuth flow."
+    },
+    {
+      "id": "linear",
+      "name": "Linear",
+      "category": "Productivity",
+      "transport": "sse",
+      "url": "https://mcp.linear.app/sse",
+      "auth": "oauth",
+      "authHint": "Paste a Linear access token from the Linear MCP OAuth flow."
+    },
+    {
+      "id": "gmail",
+      "name": "Gmail",
+      "category": "Productivity",
+      "transport": "http",
+      "url": "",
+      "auth": "oauth",
+      "authHint": "Set your Google/Gmail MCP endpoint URL + access token."
+    },
+    {
+      "id": "gdrive",
+      "name": "Google Drive",
+      "category": "Data",
+      "transport": "http",
+      "url": "",
+      "auth": "oauth",
+      "authHint": "Set your Google Drive MCP endpoint URL + access token."
+    },
+    {
+      "id": "gcal",
+      "name": "Google Calendar",
+      "category": "Productivity",
+      "transport": "http",
+      "url": "",
+      "auth": "oauth",
+      "authHint": "Set your Google Calendar MCP endpoint URL + access token."
+    },
+    {
+      "id": "clickup",
+      "name": "ClickUp",
+      "category": "Productivity",
+      "transport": "http",
+      "url": "",
+      "auth": "token",
+      "authHint": "Set your ClickUp MCP endpoint URL + API token."
+    },
+    {
+      "id": "figma",
+      "name": "Figma",
+      "category": "Marketing",
+      "transport": "http",
+      "url": "",
+      "auth": "token",
+      "authHint": "Set your Figma MCP endpoint URL + access token."
+    },
+    {
+      "id": "asana",
+      "name": "Asana",
+      "category": "Productivity",
+      "transport": "sse",
+      "url": "",
+      "auth": "oauth",
+      "authHint": "Set your Asana MCP endpoint URL + access token."
+    }
+  ]
+}
