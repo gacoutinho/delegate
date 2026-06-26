@@ -1,19 +1,19 @@
 /**
- * Carregador de agentes.
+ * Agent loader.
  *
- * Cada agente é um arquivo Markdown em `agents/<area>/<id>.md` com frontmatter.
- * Isso é de propósito: é fácil de versionar no Git, fácil de ler, e o próprio
- * Claude Code consegue criar/editar esses arquivos para customizar a plataforma.
+ * Each agent is a Markdown file at `agents/<area>/<id>.md` with frontmatter.
+ * This is intentional: easy to version in Git, easy to read, and Claude Code
+ * itself can create/edit these files to customize the platform.
  *
  *   ---
- *   name: Analista de CSV
- *   description: Lê um CSV e responde perguntas analíticas sobre ele.
- *   model: claude-opus-4-8            # opcional
- *   tools: [Read, Bash, Write, Glob]  # opcional: lista de ferramentas permitidas
+ *   name: CSV Analyst
+ *   description: Reads a CSV and answers analytical questions about it.
+ *   model: claude-opus-4-8            # optional
+ *   tools: [Read, Bash, Write, Glob]  # optional: allow-list of tools
  *   examples:
- *     - "Quais os 5 produtos que mais cresceram em vendas.csv?"
+ *     - "Which 5 products grew the most in sales.csv?"
  *   ---
- *   <corpo em markdown = system prompt / instruções do agente>
+ *   <markdown body = the agent's system prompt / instructions>
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -32,11 +32,11 @@ export type AgentDef = {
   name: string;
   description: string;
   model?: string;
-  /** Lista de ferramentas built-in permitidas (Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch...). */
+  /** Allow-list of built-in tools (Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch...). */
   tools?: string[];
-  /** Sugestões de tarefas mostradas na interface. */
+  /** Task suggestions shown in the UI. */
   examples?: string[];
-  /** Corpo do markdown = system prompt do agente. */
+  /** Markdown body = the agent's system prompt. */
   systemPrompt: string;
   filePath: string;
 };
@@ -86,7 +86,7 @@ export function getAgent(id: string): AgentDef | undefined {
   return loadAgents().find((a) => a.id === id);
 }
 
-/** Versão "leve" do agente para enviar ao cliente (sem o system prompt completo). */
+/** Lightweight agent shape for the client (without the full system prompt). */
 export type AgentSummary = Omit<AgentDef, "systemPrompt" | "filePath">;
 
 export function toSummary(a: AgentDef): AgentSummary {

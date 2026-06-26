@@ -1,22 +1,21 @@
 /**
- * Runner — a ponte entre uma definição de agente e o Claude Agent SDK.
+ * Runner — the bridge between an agent definition and the Claude Agent SDK.
  *
- * O Agent SDK (`query`) roda o harness do Claude Code como biblioteca: o agente
- * realmente lê/escreve arquivos, roda comandos no shell, busca na web, etc.
- * Aqui a gente normaliza o fluxo de mensagens do SDK em `ForgeEvent`s simples,
- * que a rota /api/run transmite por SSE e a interface renderiza.
+ * The Agent SDK (`query`) runs the Claude Code harness as a library: the agent
+ * really reads/writes files, runs shell commands, searches the web, etc. Here we
+ * normalize the SDK's message stream into simple `AgentEvent`s, which the
+ * /api/run route streams over SSE and the UI renders.
  */
-import path from "node:path";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import type { AgentDef } from "./agents";
 
-/** Diretório de trabalho dos agentes: a raiz do projeto.
- *  Entradas do usuário ficam em `data/`; saídas costumam ir para `data/` também. */
+/** Agents' working directory: the project root.
+ *  User inputs live in `data/`; outputs usually go to `data/` too. */
 const CWD = process.cwd();
 
-const DEFAULT_MODEL = process.env.AGENT_FORGE_DEFAULT_MODEL || "claude-opus-4-8";
+const DEFAULT_MODEL = process.env.DELEGATE_DEFAULT_MODEL || "claude-opus-4-8";
 
-export type ForgeEvent =
+export type AgentEvent =
   | { kind: "start"; agent: string; agentName: string }
   | { kind: "system"; agent: string; text: string }
   | { kind: "assistant"; agent: string; text: string }
@@ -34,29 +33,29 @@ function envForSdk(): Record<string, string> {
 }
 
 /**
- * Roda um único agente com uma tarefa e produz um stream de ForgeEvents.
- * O texto final do agente é retornado também (via o evento `result.text`)
- * para que o modo "equipe" possa encadear agentes.
+ * Run a single agent on a task and produce a stream of AgentEvents.
+ * The agent's final text is surfaced (via the `result.text` event) so the
+ * "team" mode can chain agents together.
  */
 export async function* runAgent(
   agent: AgentDef,
   task: string,
-): AsyncGenerator<ForgeEvent> {
+): AsyncGenerator<AgentEvent> {
   yield { kind: "start", agent: agent.id, agentName: agent.name };
 
   const response = query({
     prompt: task,
     options: {
       model: agent.model || DEFAULT_MODEL,
-      // Mantém todo o comportamento do agente do Claude Code (uso de ferramentas
-      // confiável) e adiciona as instruções específicas deste agente.
+      // Keep the full Claude Code agent behavior (reliable tool use) and append
+      // this agent's specific instructions.
       systemPrompt: { type: "preset", preset: "claude_code", append: agent.systemPrompt },
       allowedTools: agent.tools,
       cwd: CWD,
-      // Não carrega settings.json/CLAUDE.md locais — o comportamento vem do
-      // arquivo do agente, de forma reproduzível.
+      // Don't load local settings.json/CLAUDE.md — behavior comes from the
+      // agent file, reproducibly.
       settingSources: [],
-      // Execução real e autônoma (sem prompt interativo). Veja o aviso no README.
+      // Real, autonomous execution (no interactive prompt). See the README note.
       permissionMode: "bypassPermissions",
       allowDangerouslySkipPermissions: true,
       env: envForSdk(),
@@ -71,7 +70,7 @@ export async function* runAgent(
             yield {
               kind: "system",
               agent: agent.id,
-              text: `modelo ${message.model} · ferramentas: ${message.tools.join(", ")}`,
+              text: `model ${message.model} · tools: ${message.tools.join(", ")}`,
             };
           }
           break;
@@ -85,7 +84,7 @@ export async function* runAgent(
             }
           }
           if (message.error) {
-            yield { kind: "error", agent: agent.id, text: `erro do modelo: ${message.error}` };
+            yield { kind: "error", agent: agent.id, text: `model error: ${message.error}` };
           }
           break;
         }
@@ -113,32 +112,32 @@ export async function* runAgent(
 }
 
 /**
- * Modo equipe: roda vários agentes em sequência. Cada agente recebe a tarefa
- * original + um resumo do que os agentes anteriores entregaram, podendo
- * construir sobre o trabalho deles (arquivos no disco + texto de contexto).
+ * Team mode: run several agents in sequence. Each agent receives the original
+ * task + a summary of what the previous agents delivered, so it can build on
+ * their work (files on disk + context text).
  */
 export async function* runTeam(
   agents: AgentDef[],
   task: string,
-): AsyncGenerator<ForgeEvent> {
+): AsyncGenerator<AgentEvent> {
   const priorResults: { name: string; text: string }[] = [];
 
   for (const agent of agents) {
     let prompt = task;
     if (priorResults.length > 0) {
       const context = priorResults
-        .map((r) => `### Entrega de "${r.name}"\n${r.text}`)
+        .map((r) => `### Output from "${r.name}"\n${r.text}`)
         .join("\n\n");
       prompt =
-        `Tarefa original da equipe:\n${task}\n\n` +
-        `Os agentes anteriores já trabalharam nisto (os arquivos que eles ` +
-        `criaram estão no disco). Construa sobre o trabalho deles.\n\n${context}`;
+        `Original team task:\n${task}\n\n` +
+        `The previous agents already worked on this (the files they created are ` +
+        `on disk). Build on their work.\n\n${context}`;
     }
 
     let finalText = "";
     for await (const ev of runAgent(agent, prompt)) {
       if (ev.kind === "result") finalText = ev.text;
-      // Não propaga o "done" de cada agente individual no modo equipe.
+      // Don't propagate each individual agent's "done" in team mode.
       if (ev.kind !== "done") yield ev;
     }
     priorResults.push({ name: agent.name, text: finalText });

@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // O Claude Agent SDK roda como dependência de servidor (Node), nunca no bundle do cliente.
+  // The Claude Agent SDK runs as a server-only (Node) dependency, never in the client bundle.
   serverExternalPackages: ["@anthropic-ai/claude-agent-sdk"],
 };
 

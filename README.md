@@ -1,129 +1,131 @@
-# 🛠️ Agent Forge
+# 🤝 Delegate
 
-Uma plataforma para **criar, customizar e operar agentes especializados** em otimização de áreas hands-on.
+A platform to **create, customize and operate specialized agents** that optimize hands-on areas.
 
-A ideia é simples: você tem **áreas** (Dados, Produtividade, Dev, Marketing…), e dentro de cada área existem **agentes** — cada um especialista numa coisa. Você abre o webapp, clica num agente (ou seleciona vários para uma **equipe**), descreve a tarefa, e eles **executam de verdade**: leem os seus dados, rodam comandos, escrevem arquivos, buscam na web. Não é só resposta de chat — é trabalho feito.
+The idea is simple: you have **areas** (Data, Productivity, Dev, Marketing…), and inside each area live **agents** — each a specialist at one thing. You open the webapp, pick an agent (or several, as a **team**), describe the task, and they **actually execute**: read your data, run commands, write files, search the web. It's not just a chat reply — it's work done.
 
-O motor por baixo é o **[Claude Agent SDK](https://www.npmjs.com/package/@anthropic-ai/claude-agent-sdk)**, que dá aos agentes ferramentas reais (arquivos, shell, web, MCP) — o mesmo harness do Claude Code, como biblioteca.
+The engine underneath is the **[Claude Agent SDK](https://www.npmjs.com/package/@anthropic-ai/claude-agent-sdk)**, which gives agents real tools (files, shell, web, MCP) — the same harness as Claude Code, as a library.
 
 ---
 
-## ⚡ Começando
+## ⚡ Getting started
 
-Pré-requisitos: **[Bun](https://bun.sh)** instalado e uma **chave da API da Anthropic**.
+Requirements: **[Bun](https://bun.sh)** installed and an **Anthropic API key**.
 
 ```bash
-# 1. instalar dependências
+# 1. install dependencies
 bun install
 
-# 2. configurar a chave da API
+# 2. configure your API key
 cp .env.example .env.local
-#   edite .env.local e coloque sua ANTHROPIC_API_KEY
+#   edit .env.local and set your ANTHROPIC_API_KEY
 
-# 3. (opcional) colocar seus dados na pasta data/
-#    ex.: cp ~/Downloads/vendas.csv data/
+# 3. (optional) drop your data into the data/ folder
+#    e.g. cp ~/Downloads/sales.csv data/
 
-# 4. rodar
+# 4. run
 bun run dev
 ```
 
-Abra **http://localhost:3000**.
+Open **http://localhost:3000**.
+
+> No keys ship in this repo. Everyone provides their own `ANTHROPIC_API_KEY` in `.env.local` (git-ignored).
 
 ---
 
-## 🧭 Como usar
+## 🧭 How to use it
 
-1. **Coloque seus dados** em `data/` (CSVs, planilhas exportadas, textos…). É de lá que os agentes leem o que você já tem.
-2. **Selecione um agente** clicando no card. Selecione **vários** para montá-los em equipe (eles rodam em sequência, cada um construindo sobre o trabalho do anterior).
-3. **Descreva a tarefa** e clique em **Executar**. Você vê, ao vivo, cada passo: o raciocínio, cada chamada de ferramenta (⚙), e a entrega final (✓) com o custo.
-
----
-
-## 🧩 Áreas e agentes que já vêm prontos
-
-| Área | Agente | O que faz |
-|------|--------|-----------|
-| 📊 Dados | **Analista de CSV** | Lê seus dados em `data/` e responde com números reais (roda comandos/scripts). |
-| 🗂️ Produtividade | **Organizador de Tarefas** | Vira notas/reuniões em um plano de ação priorizado, salvo em arquivo. |
-| ⚙️ Dev | **Automatizador** | Escreve **e roda** scripts para automatizar tarefas técnicas. |
-| 📣 Marketing | **Pesquisador de Mercado** | Pesquisa na web com fontes e entrega um briefing acionável. |
-
-Esses são só o ponto de partida. **A graça é criar os seus** — veja [`CREATING_AGENTS.md`](./CREATING_AGENTS.md).
+1. **Drop your data** into `data/` (CSVs, exported spreadsheets, text…). That's where agents read what you already have.
+2. **Pick an agent** by clicking its card. Pick **several** to form a team (they run in sequence, each building on the previous one's work).
+3. **Describe the task** and click **Run**. You watch it live: the reasoning, every tool call (⚙), and the final delivery (✓) with the cost.
 
 ---
 
-## 🏗️ Como funciona (arquitetura)
+## 🧩 Agents that ship by default
+
+| Area | Agent | What it does |
+|------|-------|--------------|
+| 📊 Data | **CSV Analyst** | Reads your data in `data/` and answers with real numbers (runs commands/scripts). |
+| 🗂️ Productivity | **Task Organizer** | Turns notes/meetings into a prioritized action plan, saved to a file. |
+| ⚙️ Dev | **Automator** | Writes **and runs** scripts to automate technical tasks. |
+| 📣 Marketing | **Market Researcher** | Searches the web with sources and delivers an actionable briefing. |
+
+These are just the starting point. **The fun part is making your own** — see [`CREATING_AGENTS.md`](./CREATING_AGENTS.md).
+
+---
+
+## 🏗️ How it works (architecture)
 
 ```
-Você (navegador)
-   │  seleciona agente(s) + descreve tarefa
+You (browser)
+   │  pick agent(s) + describe task
    ▼
-src/components/Workspace.tsx ──POST──▶ /api/run  (SSE, streaming ao vivo)
+src/components/Workspace.tsx ──POST──▶ /api/run  (SSE, live streaming)
                                           │
                                           ▼
                               src/lib/runner.ts
-                                          │  query() do Claude Agent SDK
+                                          │  query() from the Claude Agent SDK
                                           ▼
-                            Claude Agent SDK (harness do Claude Code)
-                              · Read / Write / Edit  (arquivos)
-                              · Bash                 (comandos reais)
+                            Claude Agent SDK (Claude Code harness)
+                              · Read / Write / Edit  (files)
+                              · Bash                 (real commands)
                               · WebSearch / WebFetch (web)
-                              · MCP                  (integrações)
+                              · MCP                  (integrations)
                                           │
-                            executa em ./ (lê data/, escreve onde precisar)
+                            executes in ./ (reads data/, writes where needed)
 ```
 
-- **Agentes = arquivos Markdown** em `agents/<área>/<id>.md` (frontmatter + instruções). Versionáveis no Git, legíveis, e o próprio Claude Code consegue criá-los/editá-los.
-- **`areas.config.json`** define as áreas (emoji, título, descrição).
-- **`src/lib/agents.ts`** carrega os arquivos; **`src/lib/runner.ts`** transforma uma definição em uma execução do Agent SDK e normaliza o stream de eventos.
-- **`/api/run`** transmite os eventos por **SSE** para a interface renderizar ao vivo.
+- **Agents = Markdown files** at `agents/<area>/<id>.md` (frontmatter + instructions). Git-versionable, readable, and Claude Code itself can create/edit them.
+- **`areas.config.json`** defines the areas (emoji, title, description).
+- **`src/lib/agents.ts`** loads the files; **`src/lib/runner.ts`** turns a definition into an Agent SDK run and normalizes the event stream.
+- **`/api/run`** streams events over **SSE** for the UI to render live.
 
 ---
 
-## ⚠️ Sobre execução real e segurança
+## ⚠️ About real execution and safety
 
-Para que os agentes **executem de fato** (e não só descrevam o que fariam), eles rodam com `permissionMode: "bypassPermissions"` — ou seja, **sem pedir confirmação a cada passo**. Eles têm acesso de leitura/escrita ao diretório do projeto e ao shell.
+So that agents **actually execute** (instead of just describing what they would do), they run with `permissionMode: "bypassPermissions"` — i.e. **without asking for confirmation at each step**. They have read/write access to the project directory and the shell.
 
-- Rode isto **na sua máquina, com dados que são seus**. É uma ferramenta pessoal/local.
-- Trate `data/` como a pasta de trabalho. Faça backup de arquivos importantes.
-- Não exponha este app na internet pública sem antes trocar o modo de permissão por um gate (`canUseTool`) — o código já está pronto para isso em `src/lib/runner.ts`.
-- A chave da API fica só em `.env.local` (já no `.gitignore`). Nunca commite.
+- Run this **on your own machine, with data that's yours**. It's a local/personal tool.
+- Treat `data/` as the working folder. Back up important files.
+- Don't expose this app on the public internet without first swapping the permission mode for a gate (`canUseTool`) — the code is ready for that in `src/lib/runner.ts`.
+- The API key stays only in `.env.local` (already git-ignored). Never commit it.
 
 ---
 
-## 📁 Estrutura
+## 📁 Structure
 
 ```
-agent-forge/
-├─ agents/                 # 🧠 os agentes (Markdown) — edite/crie aqui
-│  ├─ dados/analista-csv.md
-│  ├─ produtividade/organizador.md
-│  ├─ dev/automatizador.md
-│  └─ marketing/pesquisador.md
-├─ areas.config.json       # definição das áreas
-├─ data/                   # 📥 seus dados de entrada (e saídas dos agentes)
+delegate/
+├─ agents/                    # 🧠 the agents (Markdown) — edit/create here
+│  ├─ data/csv-analyst.md
+│  ├─ productivity/task-organizer.md
+│  ├─ dev/automator.md
+│  └─ marketing/market-researcher.md
+├─ areas.config.json          # area definitions
+├─ data/                      # 📥 your input data (and agent outputs)
 ├─ src/
 │  ├─ app/
-│  │  ├─ page.tsx           # dashboard (áreas → agentes)
+│  │  ├─ page.tsx              # dashboard (areas → agents)
 │  │  └─ api/
-│  │     ├─ agents/route.ts # lista agentes/áreas
-│  │     └─ run/route.ts    # executa agente(s) e faz streaming SSE
+│  │     ├─ agents/route.ts    # lists agents/areas
+│  │     └─ run/route.ts       # runs agent(s) and streams over SSE
 │  ├─ components/
-│  │  ├─ Dashboard.tsx      # grid + seleção + equipe
-│  │  └─ Workspace.tsx      # execução ao vivo
+│  │  ├─ Dashboard.tsx         # grid + selection + team
+│  │  └─ Workspace.tsx         # live execution
 │  └─ lib/
-│     ├─ agents.ts          # carrega definições
-│     └─ runner.ts          # ponte com o Claude Agent SDK
-└─ CREATING_AGENTS.md       # como criar novos agentes
+│     ├─ agents.ts             # loads definitions
+│     └─ runner.ts             # bridge to the Claude Agent SDK
+└─ CREATING_AGENTS.md          # how to create new agents
 ```
 
 ---
 
-## 🗺️ Próximos passos (ideias)
+## 🗺️ Roadmap (ideas)
 
-- Integrações MCP (Slack, Notion, ClickUp, Gmail, Drive) por agente.
-- Empacotar como app de desktop (Tauri) sem reescrever.
-- Equipe em paralelo / orquestrador, além de sequencial.
-- Editor de agentes na própria interface.
+- Per-agent MCP integrations (Slack, Notion, ClickUp, Gmail, Drive).
+- Package as a desktop app (Tauri) without rewriting.
+- Parallel / orchestrated teams, beyond sequential.
+- An in-app agent editor.
 
-Construído com Next.js + Bun + Claude Agent SDK.
+Built with Next.js + Bun + the Claude Agent SDK.

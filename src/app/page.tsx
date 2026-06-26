@@ -11,14 +11,14 @@ export default function Home() {
     <div className="app-shell">
       <div className="topbar">
         <div className="brand">
-          Agent <span>Forge</span>
+          <span>Delegate</span>
         </div>
-        <div className="cost">{agents.length} agentes · {areas.length} áreas</div>
+        <div className="cost">{agents.length} agents · {areas.length} areas</div>
       </div>
       <p className="subtitle">
-        Áreas hands-on, cada uma com agentes especializados. Clique para selecionar,
-        descreva a tarefa e eles <strong>executam de verdade</strong> — leem seus dados,
-        rodam comandos, escrevem arquivos. Selecione vários para trabalharem em equipe.
+        Hands-on areas, each with specialized agents. Click to pick one, describe
+        the task, and they <strong>actually execute</strong> — read your data, run
+        commands, write files. Pick several to make them work as a team.
       </p>
 
       <Dashboard areas={areas} agents={agents} />

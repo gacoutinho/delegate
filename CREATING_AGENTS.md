@@ -1,62 +1,62 @@
-# 🧠 Criando agentes
+# 🧠 Creating agents
 
-Um agente é só um arquivo **Markdown** dentro de `agents/<área>/`. Sem código. O nome do arquivo (sem `.md`) vira o `id` do agente, e a pasta define a área.
+An agent is just a **Markdown** file inside `agents/<area>/`. No code. The filename (without `.md`) becomes the agent's `id`, and the folder defines the area.
 
-## Anatomia de um agente
+## Anatomy of an agent
 
 ```markdown
 ---
-name: Analista de CSV                       # nome exibido no card
-description: Lê seus dados e responde...     # texto do card
-model: claude-opus-4-8                       # opcional (default: claude-opus-4-8)
-tools: [Read, Bash, Glob, Grep, Write]       # opcional: ferramentas permitidas
-examples:                                    # opcional: sugestões na interface
-  - "Quais os 5 produtos que mais cresceram em vendas.csv?"
+name: CSV Analyst                            # name shown on the card
+description: Reads your data and answers...   # card text
+model: claude-opus-4-8                        # optional (default: claude-opus-4-8)
+tools: [Read, Bash, Glob, Grep, Write]        # optional: allowed tools
+examples:                                     # optional: UI suggestions
+  - "Which 5 products grew the most in sales.csv?"
 ---
-Aqui vai o SYSTEM PROMPT do agente — quem ele é, como pensa,
-o que deve sempre/nunca fazer, e o formato da entrega.
+This is the agent's SYSTEM PROMPT — who it is, how it thinks,
+what it should always/never do, and the delivery format.
 ```
 
-- **Frontmatter** (entre `---`): metadados.
-- **Corpo**: as instruções do agente (system prompt). É aqui que mora a especialização.
+- **Frontmatter** (between `---`): metadata.
+- **Body**: the agent's instructions (system prompt). This is where the specialization lives.
 
-### Campo `tools` (ferramentas)
+### The `tools` field
 
-Lista de ferramentas built-in que o agente pode usar. Se omitir, ele tem acesso a todas. As principais:
+A list of built-in tools the agent may use. Omit it to allow all. The main ones:
 
-| Ferramenta | Para quê |
-|-----------|----------|
-| `Read` / `Write` / `Edit` | Ler e escrever arquivos |
-| `Bash` | Rodar comandos no shell (scripts, conversões, cálculos) |
-| `Glob` / `Grep` | Encontrar arquivos e buscar dentro deles |
-| `WebSearch` / `WebFetch` | Buscar e ler páginas da web |
+| Tool | For |
+|------|-----|
+| `Read` / `Write` / `Edit` | Read and write files |
+| `Bash` | Run shell commands (scripts, conversions, calculations) |
+| `Glob` / `Grep` | Find files and search inside them |
+| `WebSearch` / `WebFetch` | Search and read web pages |
 
-Dê a cada agente **só o que ele precisa** — um pesquisador não precisa de `Bash`; um automatizador precisa.
+Give each agent **only what it needs** — a researcher doesn't need `Bash`; an automator does.
 
-## Criando uma área nova
+## Creating a new area
 
-Edite `areas.config.json` e adicione um item ao array `areas`:
+Edit `areas.config.json` and add an item to the `areas` array:
 
 ```json
-{ "id": "vendas", "emoji": "💰", "title": "Vendas", "description": "Pipeline, propostas, follow-ups." }
+{ "id": "sales", "emoji": "💰", "title": "Sales", "description": "Pipeline, proposals, follow-ups." }
 ```
 
-Depois crie a pasta `agents/vendas/` e coloque os arquivos dos agentes ali.
+Then create the folder `agents/sales/` and put the agent files there.
 
-## 🤝 Deixe o Claude Code criar os agentes para você
+## 🤝 Let Claude Code create the agents for you
 
-A forma mais rápida de customizar: peça ao **Claude Code** (na raiz do projeto). Ex.:
+The fastest way to customize: ask **Claude Code** (from the project root). For example:
 
-> "Crie um agente na área `dados` chamado `limpeza-planilha` que recebe uma planilha
-> bagunçada em `data/`, normaliza colunas e datas, remove duplicatas e salva uma versão
-> limpa. Use Read, Bash, Write. Adicione 3 exemplos."
+> "Create an agent in the `data` area called `spreadsheet-cleaner` that takes a messy
+> spreadsheet in `data/`, normalizes columns and dates, removes duplicates, and saves
+> a clean version. Use Read, Bash, Write. Add 3 examples."
 
-O Claude Code escreve o arquivo `agents/dados/limpeza-planilha.md` no formato certo, e ele aparece na interface no próximo refresh.
+Claude Code writes `agents/data/spreadsheet-cleaner.md` in the right format, and it shows up in the UI on the next refresh.
 
-## Dicas para um bom agente
+## Tips for a good agent
 
-1. **Seja específico no system prompt.** "Você é um analista de dados pragmático que sempre trabalha com os números reais" funciona melhor que "ajude com dados".
-2. **Mande materializar o resultado** (escrever arquivo) quando fizer sentido — não só responder no chat.
-3. **Peça para começar pela conclusão** e depois detalhar — entregas ficam mais úteis.
-4. **Diga o que NÃO fazer** (não inventar números, não rodar comandos destrutivos sem pedido explícito).
-5. **Teste e itere.** Rode uma tarefa real, veja onde ele tropeça, ajuste o arquivo.
+1. **Be specific in the system prompt.** "You are a pragmatic data analyst who always works with the real numbers" beats "help with data".
+2. **Make it materialize the result** (write a file) when it makes sense — not just a chat reply.
+3. **Ask it to lead with the conclusion**, then the detail — deliveries become more useful.
+4. **Say what NOT to do** (don't invent numbers, don't run destructive commands without an explicit request).
+5. **Test and iterate.** Run a real task, see where it stumbles, tweak the file.

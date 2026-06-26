@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { AgentSummary } from "@/lib/agents";
-import type { ForgeEvent } from "@/lib/runner";
+import type { AgentEvent } from "@/lib/runner";
 
-type Item = ForgeEvent & { _id: number };
+type Item = AgentEvent & { _id: number };
 
 export default function Workspace({
   agents,
@@ -25,13 +25,13 @@ export default function Workspace({
     bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight, behavior: "smooth" });
   }, [items]);
 
-  const push = (ev: ForgeEvent) =>
+  const push = (ev: AgentEvent) =>
     setItems((prev) => [...prev, { ...ev, _id: counter.current++ }]);
 
   async function run() {
     if (!task.trim() || running) return;
     setRunning(true);
-    push({ kind: "assistant", agent: "__user", text: task } as ForgeEvent);
+    push({ kind: "assistant", agent: "__user", text: task } as AgentEvent);
     const sentTask = task;
     setTask("");
 
@@ -44,7 +44,7 @@ export default function Workspace({
 
       if (!res.ok || !res.body) {
         const err = await res.json().catch(() => ({ error: res.statusText }));
-        push({ kind: "error", agent: "system", text: err.error ?? "Falha na requisição." });
+        push({ kind: "error", agent: "system", text: err.error ?? "Request failed." });
         setRunning(false);
         return;
       }
@@ -65,11 +65,11 @@ export default function Workspace({
           const json = line.slice(5).trim();
           if (!json) continue;
           try {
-            const ev = JSON.parse(json) as ForgeEvent;
+            const ev = JSON.parse(json) as AgentEvent;
             if (ev.kind === "done") setRunning(false);
             else push(ev);
           } catch {
-            /* ignora frames parciais */
+            /* ignore partial frames */
           }
         }
       }
@@ -86,10 +86,10 @@ export default function Workspace({
         <div className="ws-head">
           <div>
             <div className="ws-title">
-              {isTeam ? `Equipe: ${agents.map((a) => a.name).join(" → ")}` : agents[0]?.name}
+              {isTeam ? `Team: ${agents.map((a) => a.name).join(" → ")}` : agents[0]?.name}
             </div>
             <div className="ws-sub">
-              {isTeam ? "Os agentes executam em sequência, um sobre o trabalho do outro." : "Descreva a tarefa. O agente vai executá-la de verdade."}
+              {isTeam ? "Agents run in sequence, each building on the previous one's work." : "Describe the task. The agent will actually execute it."}
             </div>
           </div>
           <button className="ws-close" onClick={onClose}>
@@ -100,12 +100,12 @@ export default function Workspace({
         <div className="ws-body" ref={bodyRef}>
           {items.length === 0 && (
             <div className="empty-hint">
-              Descreva uma tarefa abaixo e clique em Executar.
+              Describe a task below and click Run.
               {agents[0]?.examples && agents[0].examples.length > 0 && (
                 <>
                   <br />
                   <br />
-                  Exemplos:
+                  Examples:
                   <br />
                   {agents[0].examples.map((ex, i) => (
                     <div key={i} style={{ marginTop: 6 }}>
@@ -126,7 +126,7 @@ export default function Workspace({
           {running && (
             <div className="evt-system">
               <span className="spinner" />
-              trabalhando…
+              working…
             </div>
           )}
         </div>
@@ -134,7 +134,7 @@ export default function Workspace({
         <div className="ws-foot">
           <textarea
             value={task}
-            placeholder="Ex.: Liste os arquivos em data/ e me diga o que tem em cada um."
+            placeholder="e.g. List the files in data/ and tell me what's in each one."
             onChange={(e) => setTask(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) run();
@@ -142,7 +142,7 @@ export default function Workspace({
             disabled={running}
           />
           <button className="btn" onClick={run} disabled={running || !task.trim()}>
-            {running ? "Executando…" : "Executar"}
+            {running ? "Running…" : "Run"}
           </button>
         </div>
       </div>
@@ -155,11 +155,11 @@ function EventView({
   isTeam,
   nameOf,
 }: {
-  ev: ForgeEvent;
+  ev: AgentEvent;
   isTeam: boolean;
   nameOf: (id: string) => string;
 }) {
-  const who = (id: string) => (isTeam ? nameOf(id) : "Agente");
+  const who = (id: string) => (isTeam ? nameOf(id) : "Agent");
 
   switch (ev.kind) {
     case "assistant":
@@ -185,11 +185,11 @@ function EventView({
     case "result":
       return (
         <div className="evt evt-result">
-          <div className="who">✓ {who(ev.agent)} concluiu</div>
+          <div className="who">✓ {who(ev.agent)} done</div>
           {ev.text}
           {typeof ev.costUsd === "number" && (
             <div className="cost" style={{ marginTop: 8 }}>
-              {ev.numTurns} turnos · ${ev.costUsd.toFixed(4)}
+              {ev.numTurns} turns · ${ev.costUsd.toFixed(4)}
             </div>
           )}
         </div>
@@ -204,7 +204,7 @@ function EventView({
 function prettyInput(input: unknown): string {
   try {
     const s = JSON.stringify(input, null, 2);
-    return s.length > 1500 ? s.slice(0, 1500) + "\n… (truncado)" : s;
+    return s.length > 1500 ? s.slice(0, 1500) + "\n… (truncated)" : s;
   } catch {
     return String(input);
   }

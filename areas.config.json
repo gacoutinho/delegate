@@ -1,28 +1,28 @@
 {
   "areas": [
     {
-      "id": "dados",
+      "id": "data",
       "emoji": "📊",
-      "title": "Dados & Planilhas",
-      "description": "Ingerir, limpar e analisar os dados que você já tem (CSV, planilhas, exports)."
+      "title": "Data & Spreadsheets",
+      "description": "Ingest, clean and analyze the data you already have (CSV, spreadsheets, exports)."
     },
     {
-      "id": "produtividade",
+      "id": "productivity",
       "emoji": "🗂️",
-      "title": "Produtividade & Operação",
-      "description": "Organizar tarefas, resumir, preparar comunicação e documentos."
+      "title": "Productivity & Ops",
+      "description": "Organize tasks, summarize, prep communication and documents."
     },
     {
       "id": "dev",
       "emoji": "⚙️",
-      "title": "Dev & Automação",
-      "description": "Scripts, integrações técnicas e automações que rodam de verdade."
+      "title": "Dev & Automation",
+      "description": "Scripts, technical integrations and automations that actually run."
     },
     {
       "id": "marketing",
       "emoji": "📣",
-      "title": "Marketing & Conteúdo",
-      "description": "Pesquisa, geração de conteúdo e análise de presença."
+      "title": "Marketing & Content",
+      "description": "Research, content generation and presence analysis."
     }
   ]
 }

@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Agent Forge",
+  title: "Delegate",
   description:
-    "Crie, customize e opere agentes especializados em otimização de áreas hands-on. Eles executam de verdade.",
+    "Create, customize and operate specialized agents that optimize hands-on areas. They actually execute.",
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR">
+    <html lang="en">
       <body>{children}</body>
     </html>
   );

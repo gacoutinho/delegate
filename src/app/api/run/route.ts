@@ -1,9 +1,9 @@
 import { loadAgents, type AgentDef } from "@/lib/agents";
-import { runAgent, runTeam, type ForgeEvent } from "@/lib/runner";
+import { runAgent, runTeam, type AgentEvent } from "@/lib/runner";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-// Execuções de agentes podem ser longas (minutos). Sem timeout artificial.
+// Agent runs can be long (minutes). No artificial timeout.
 export const maxDuration = 800;
 
 export async function POST(req: Request) {
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   const task = (body.task ?? "").trim();
 
   if (agentIds.length === 0 || !task) {
-    return new Response(JSON.stringify({ error: "Informe agentIds e task." }), {
+    return new Response(JSON.stringify({ error: "Provide agentIds and task." }), {
       status: 400,
       headers: { "content-type": "application/json" },
     });
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
 
   if (!process.env.ANTHROPIC_API_KEY) {
     return new Response(
-      JSON.stringify({ error: "ANTHROPIC_API_KEY não configurada. Crie um .env.local (veja .env.example)." }),
+      JSON.stringify({ error: "ANTHROPIC_API_KEY is not set. Create a .env.local (see .env.example)." }),
       { status: 500, headers: { "content-type": "application/json" } },
     );
   }
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     .filter((a): a is AgentDef => Boolean(a));
 
   if (selected.length === 0) {
-    return new Response(JSON.stringify({ error: "Nenhum agente válido." }), {
+    return new Response(JSON.stringify({ error: "No valid agent." }), {
       status: 400,
       headers: { "content-type": "application/json" },
     });
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
-      const send = (ev: ForgeEvent) =>
+      const send = (ev: AgentEvent) =>
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(ev)}\n\n`));
 
       try {
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
           selected.length === 1
             ? (async function* () {
                 yield* runAgent(selected[0], task);
-                yield { kind: "done" } as ForgeEvent;
+                yield { kind: "done" } as AgentEvent;
               })()
             : runTeam(selected, task);
 

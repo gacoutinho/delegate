@@ -1,8 +1,8 @@
 {
-  "name": "agent-forge",
+  "name": "delegate",
   "version": "0.1.0",
   "private": true,
-  "description": "Plataforma para criar, customizar e operar agentes especializados em otimização de áreas hands-on. Cada agente executa de verdade (arquivos, comandos, APIs, MCP) via Claude Agent SDK.",
+  "description": "Delegate real work to specialized agents. Pick an area, pick an agent, describe the task — it actually executes (files, shell, web, MCP) via the Claude Agent SDK.",
   "type": "module",
   "scripts": {
     "dev": "next dev",

@@ -1,1 +1,1 @@
-Coloque aqui os dados que os agentes vão usar (CSVs, planilhas exportadas, textos, etc.). Os agentes leem desta pasta.
+Put the data you want the agents to use here (CSVs, exported spreadsheets, text, etc.). Agents read from this folder.

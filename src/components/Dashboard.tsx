@@ -45,7 +45,7 @@ export default function Dashboard({
                     className={`card${isSel ? " selected" : ""}`}
                     onClick={() => toggle(agent.id)}
                   >
-                    <span className="card-select">{isSel ? "✓ selecionado" : "selecionar"}</span>
+                    <span className="card-select">{isSel ? "✓ selected" : "select"}</span>
                     <div className="card-name">{agent.name}</div>
                     <div className="card-desc">{agent.description}</div>
                     {agent.tools && (
@@ -69,20 +69,20 @@ export default function Dashboard({
         <div className="teambar">
           <div className="names">
             {selectedAgents.length === 1 ? (
-              <>Agente: <strong>{selectedAgents[0].name}</strong></>
+              <>Agent: <strong>{selectedAgents[0].name}</strong></>
             ) : (
               <>
-                Equipe ({selectedAgents.length}):{" "}
+                Team ({selectedAgents.length}):{" "}
                 <strong>{selectedAgents.map((a) => a.name).join(" → ")}</strong>{" "}
-                <span style={{ color: "var(--text-faint)" }}>(executam em sequência)</span>
+                <span style={{ color: "var(--text-faint)" }}>(run in sequence)</span>
               </>
             )}
           </div>
           <button className="btn-ghost" onClick={() => setSelected([])}>
-            limpar
+            clear
           </button>
           <button className="btn" onClick={() => setOpen(true)}>
-            Trabalhar →
+            Delegate →
           </button>
         </div>
       )}
