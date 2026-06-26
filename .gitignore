@@ -1,0 +1,22 @@
+# deps
+node_modules
+.pnp
+.pnp.js
+
+# next
+.next
+out
+build
+
+# env (NUNCA commitar a chave da API)
+.env
+.env.local
+.env*.local
+
+# arquivos gerados pelos agentes em runtime
+/workspace/*
+!/workspace/.gitkeep
+
+# os
+.DS_Store
+*.log

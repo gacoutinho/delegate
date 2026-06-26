@@ -1,0 +1,28 @@
+{
+  "areas": [
+    {
+      "id": "dados",
+      "emoji": "📊",
+      "title": "Dados & Planilhas",
+      "description": "Ingerir, limpar e analisar os dados que você já tem (CSV, planilhas, exports)."
+    },
+    {
+      "id": "produtividade",
+      "emoji": "🗂️",
+      "title": "Produtividade & Operação",
+      "description": "Organizar tarefas, resumir, preparar comunicação e documentos."
+    },
+    {
+      "id": "dev",
+      "emoji": "⚙️",
+      "title": "Dev & Automação",
+      "description": "Scripts, integrações técnicas e automações que rodam de verdade."
+    },
+    {
+      "id": "marketing",
+      "emoji": "📣",
+      "title": "Marketing & Conteúdo",
+      "description": "Pesquisa, geração de conteúdo e análise de presença."
+    }
+  ]
+}
